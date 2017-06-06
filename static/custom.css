@@ -1,0 +1,6 @@
+.reveal li {
+  font-size: 80%;
+}
+.reveal .slides > section { text-align:left; }
+.reveal blockquote { box-shadow: none; }
+.reveal pre { margin-left: 0px; margin-right: 0px; }

@@ -1,0 +1,331 @@
+#+TITLE: Python metaclasses & descriptors
+#+OPTIONS: toc:nil num:nil reveal_progress:t reveal_history:t reveal_title_slide:"<h1>%t</h1>"
+#+REVEAL_TRANS: none
+#+REVEAL_THeme: beige
+#+REVEAL_EXTRA_CSS: ./static/custom.css
+#+REVEAL_ROOT: ./static/reveal.js
+
+* Metaclasses
+  
+** "type"
+
+#+BEGIN_SRC python
+  class MyClass(object):
+      pass
+
+  MyClass            # __main__.MyClass
+  MyClass.__class__  # type
+  type(MyClass())    # __main__.MyClass
+  type(MyClass)      # type
+  type(object)       # type
+  type(type)         # type
+
+  #      class     parent     class
+  #      name      classes    __dict__
+  type( 'Klass',     (),        {}     )  # __main__.Klass
+  # class Klass(object): pass
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  # Klass = type('Klass', (), {})
+  class Klass(object):
+      pass
+
+  # Klass2 = type('Klass2', (Klass, ), {})
+  class Klass2(Klass):
+      pass
+
+  # Klass3 = type('Klass3', (Klass, Klass2), {'a': 42})
+  class Klass3(Klass, Klass2):
+      a = 42
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  # Klass4 = type(
+  #   'Klass4',
+  #   (),
+  #   {
+  #       'a': 42,
+  #       'method': lambda instance, num: instance.a + num
+  #   }
+  # )
+  class Klass4(object):
+      a = 42
+      def method(self, x):
+          return self.a + x
+#+END_SRC
+
+
+** Metaclass API
+
+#+BEGIN_SRC python
+  Metaclass.__prepare__(mcls, name, bases, attrs)  # classmethod
+  Metaclass.__new__(mcls, name, bases, attrs, **kwargs)
+  Metaclass.__init__(cls, name, bases, attrs, **kwargs)
+  Metaclass.__call__(cls, *args, **kwargs)
+#+END_SRC
+  
+
+** =__prepare__=
+
+- returns dict-like object (empty or not)
+- if not dict, must be converted to dict before =__new__= returns
+
+#+REVEAL: split
+  
+#+BEGIN_SRC python
+  class OnlyUppercase(dict):
+      def __setitem__(self, key, value):
+          if isinstance(key, str) and key.isupper():
+              super().__setitem__(key, value)
+
+  class MyMeta(type):
+      @classmethod
+      def __prepare__(mcls, name, bases):
+          return OnlyUppercase()
+
+      def __new__(mcls, name, bases, attrs):
+          return super().__new__(mcls, name, bases, dict(attrs))
+
+  class MyClass(metaclass=MyMeta):
+      a = 1
+      B = 2
+
+  MyClass.__dict__  # {..., 'B': 2} (no a)
+#+END_SRC
+
+
+** =__new__=
+
+** =__init__=
+
+** =__call__=
+
+- object instantiation (before Class.__init__)
+
+
+* Descriptors
+
+- only defined in class-level (not in =__init__= etc.)
+- objects with =__get__=, =__set__= & =__delete__= methods
+- =__get__= & =__set__= = data descriptors
+- only =__get__= = non-data descriptors
+  
+** Descriptor API
+
+#+BEGIN_SRC python
+  descr.__get__(self, obj, type=None)  # -> value
+  descr.__set__(self, obj, value)  # -> None
+  descr.__delete__(self, obj)  # -> None
+#+END_SRC
+  
+** Example
+   
+#+BEGIN_SRC python
+  class Descriptor(object):
+      def __init__(self, initval=None, name='var'):
+          self.val = initval
+          self.name = name
+
+      def __get__(self, obj, cls):
+          print('get', self.name)
+          return self.val
+
+      def __set__(self, obj, val):
+          print('set', self.name)
+          self.val = val
+
+
+  class MyClass(object):
+      attr = Descriptor(initval=10, name='attr')
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC ipython
+  >>> MyClass.attr
+  get attr
+  10
+  >>> MyClass.attr = 11
+  >>> MyClass.attr
+  11
+  >>> # oops
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC ipython
+  >>> a = MyClass()
+  >>> a.attr
+  get attr
+  10
+  >>> a.attr = 11
+  set attr
+  >>> a.attr
+  get attr
+  11
+
+  >>> b = MyClass()
+  >>> b.attr
+  get attr
+  11
+  >>> # wat
+#+END_SRC
+
+
+** Example
+   
+- use descriptors to indirectly set values on =instance.__dict__=
+- if called from class, just return the descriptor class
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  class Descriptor(object):
+      def __init__(self, name):
+          self.name = name
+
+      def __get__(self, obj, cls):
+          if obj is None:
+              return self
+          try:
+              print('get', self.name)
+              return obj.__dict__[self.name]
+          except KeyError:
+              raise AttributeError()
+
+      def __set__(self, obj, val):
+          print('set', self.name)
+          obj.__dict__[self.name] = val
+
+  class MyClass(object):
+      attr  = Descriptor('attr')
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC ipython
+  >>> MyClass.attr
+  <__main__.Descriptor at 0x312....>
+  >>>
+  >>> a = MyClass()
+  >>> a.attr
+  get attr
+  Traceback (most recent call last)
+  ....
+  AttributeError: ...
+  >>> a.attr = 1
+  set attr
+  >>> a.attr
+  get attr
+  1
+  >>>
+  >>> b = MyClass()
+  >>> b.attr = 2
+  set attr
+  >>> b.attr
+  get attr
+  2
+  >>> a.attr
+  get attr
+  1
+#+END_SRC
+
+
+* Metaclasses & descriptors
+
+- attr = Descriptor('attr') -> attr = Descriptor()
+
+** Example
+
+#+BEGIN_SRC python
+  class Descriptor(object):
+      def __init__(self):
+          self.name = None
+
+      def __get__(self, obj, cls):
+          if obj is None:
+              return self
+          try:
+              print('get', self.name)
+              return obj.__dict__[self.name]
+          except KeyError:
+              raise AttributeError()
+
+      def __set__(self, obj, val):
+          print('set', self.name)
+          obj.__dict__[self.name] = val
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  class MyMeta(type):
+      def __new__(mcls, name, bases, attrs):
+          for k, v in attrs.items():
+              if isinstance(v, Descriptor):
+                  v.name = k
+          return super().__new__(mcls, name, bases, attrs)
+
+  class MyClass(metaclass=MyMeta):
+      attr  = Descriptor()
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC ipython
+  >>> MyClass.attr
+  <__main__.Descriptor at 0x312....>
+  >>>
+  >>> a = MyClass()
+  >>> a.attr = 1
+  set attr
+  >>> a.attr
+  get attr
+  1
+  >>> a.__dict__
+  {'attr': 1}
+#+END_SRC
+
+
+* Attribute lookup
+  
+** Object-level (instance.attr)
+
+#+ATTR_REVEAL: :frag (appear)
+- attr in =Class.__dict__= and attr is data descriptor -> =Class.__dict__['attr'].__get__(instance, Class)=
+- attr in =instance.__dict__= -> =instance.__dict__['attr']=
+- attr in =Class.__dict__= *and* attr is *not* a descriptor -> =Class.__dict__['attr'].__get__(instance, Class)=
+- attr in =Class.__dict__= -> =Class.__dict__['attr']=
+- =Class.__getattr__= exists -> =Class.__getattr__('attr')=
+   
+** Class-level (Class.attr)
+
+#+ATTR_REVEAL: :frag (appear)
+- attr in =Metaclass.__dict__= and attr is data desciptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
+- attr in =Class.__dict__= and attr is descriptor -> =Class.__dict__['attr'].__get__(None, Class)=
+- attr in =Class.__dict__= -> =Class.__dict__['attr']=
+
+** Class-level (cont.)
+
+#+ATTR_REVEAL: :frag (appear)
+- attr in =Metaclass.__dict__= *and* attr is *not* a descriptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
+- attr in =Metaclass.__dict__= -> =Metaclass.__dict__['attr']=
+- =Metaclass.__getattr__= exists -> =Metaclass.__getattr__('attr')=
+
+
+* Links
+
+- https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/
+- https://docs.python.org/3/howto/descriptor.html
+- https://www.youtube.com/watch?v=sPiWg5jSoZI
+- https://www.python.org/dev/peps/pep-3115/
+
+
+# Local Variables:
+# org-hide-emphasis-markers: t
+# End:
