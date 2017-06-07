@@ -8,6 +8,10 @@
   font-family: 'Source Code Pro', monospace;
 }
 
+.reveal code {
+  font-family: 'Source Code Pro', monospace;
+}
+
 .reveal .slides > section {
   text-align:left;
 }

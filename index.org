@@ -130,10 +130,10 @@
 - *class* initializer (after =__new__=)
 - not generally useful
 
-
+  
 ** =__call__=
 
-- *object* instantiation (before =Class.__init__=)
+- *object* instantiation (before =Class.__new__= & =Class.__init__=)
   
 #+BEGIN_SRC python
   class MyMeta(type):
@@ -364,7 +364,7 @@
 
 * Metaclasses & descriptors
 
-- attr = Descriptor('attr') -> attr = Descriptor()
+- =attr = Descriptor('attr')= -> =attr = Descriptor()=
 
 ** Example
 
