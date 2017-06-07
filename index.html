@@ -31,12 +31,12 @@
 </section>
 
 <section>
-<section id="slide-orgf9550c0">
-<h2 id="orgf9550c0">Metaclasses</h2>
-<div class="outline-text-2" id="text-orgf9550c0">
+<section id="slide-orgb7112c8">
+<h2 id="orgb7112c8">Metaclasses</h2>
+<div class="outline-text-2" id="text-orgb7112c8">
 </div></section>
-<section id="slide-org079ae21">
-<h3 id="org079ae21">"type"</h3>
+<section id="slide-orgca46193">
+<h3 id="orgca46193">"type"</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class MyClass(object):
@@ -97,8 +97,8 @@ class Klass4(object):
 
 
 </section>
-<section id="slide-orgebb0a9c">
-<h3 id="orgebb0a9c">Metaclass API</h3>
+<section id="slide-org44854d2">
+<h3 id="org44854d2">Metaclass API</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >Metaclass.__prepare__(mcls, name, bases, attrs)  # classmethod
@@ -110,8 +110,8 @@ Metaclass.__call__(cls, *args, **kwargs)
 
 
 </section>
-<section id="slide-org1dbf6ee">
-<h3 id="org1dbf6ee"><code>__prepare__</code></h3>
+<section id="slide-orgbaca652">
+<h3 id="orgbaca652"><code>__prepare__</code></h3>
 <ul>
 <li>returns dict-like object (empty or not)</li>
 <li>if not dict, must be converted to dict before <code>__new__</code> returns</li>
@@ -146,8 +146,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-org096748b">
-<h3 id="org096748b"><code>__new__</code></h3>
+<section id="slide-orgc13fa0f">
+<h3 id="orgc13fa0f"><code>__new__</code></h3>
 <ul>
 <li><b>class</b> constructor (<code>class MyClass ...</code> -&gt; <code>__new__</code> runs)</li>
 <li>most useful</li>
@@ -156,8 +156,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-org5bf97a7">
-<h3 id="org5bf97a7"><code>__init__</code></h3>
+<section id="slide-orgcf38c4f">
+<h3 id="orgcf38c4f"><code>__init__</code></h3>
 <ul>
 <li><b>class</b> initializer (after <code>__new__</code>)</li>
 <li>not generally useful</li>
@@ -166,8 +166,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-orgbf5e3c7">
-<h3 id="orgbf5e3c7"><code>__call__</code></h3>
+<section id="slide-orgbb6159b">
+<h3 id="orgbb6159b"><code>__call__</code></h3>
 <ul>
 <li><b>object</b> instantiation (before <code>Class.__init__</code>)</li>
 
@@ -196,8 +196,8 @@ In class (1, 2) {'foo': 42}
 
 
 </section>
-<section id="slide-orgfbdac6b">
-<h3 id="orgfbdac6b">Call order</h3>
+<section id="slide-org4302e5d">
+<h3 id="org4302e5d">Call order</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class MyMeta(type):
@@ -249,8 +249,8 @@ Class __init__
 
 
 </section>
-<section id="slide-orgab1eefa">
-<h3 id="orgab1eefa">Example: singleton</h3>
+<section id="slide-org711c390">
+<h3 id="org711c390">Example: singleton</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class SingletonMeta(type):
@@ -277,8 +277,8 @@ True
 
 
 </section>
-<section id="slide-org98d4709">
-<h3 id="org98d4709">Example: metaclass is a callable</h3>
+<section id="slide-org8782319">
+<h3 id="org8782319">Example: metaclass is a callable</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >>>> class MyClass(metaclass=print):
@@ -294,8 +294,8 @@ True
 </section>
 </section>
 <section>
-<section id="slide-org3d1a31b">
-<h2 id="org3d1a31b">Descriptors</h2>
+<section id="slide-org3534c09">
+<h2 id="org3534c09">Descriptors</h2>
 <ul>
 <li>only defined in class-level (not in <code>__init__</code> etc.)</li>
 <li>objects with <code>__get__</code>, <code>__set__</code> &amp; <code>__delete__</code> methods</li>
@@ -306,8 +306,8 @@ True
 
 
 </section>
-<section id="slide-orgdcc8d42">
-<h3 id="orgdcc8d42">Descriptor API</h3>
+<section id="slide-orgbdee7da">
+<h3 id="orgbdee7da">Descriptor API</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >descr.__get__(self, obj, type=None)  # -> value
@@ -318,8 +318,8 @@ descr.__delete__(self, obj)  # -> None
 
 
 </section>
-<section id="slide-org8bf9ae3">
-<h3 id="org8bf9ae3">Example</h3>
+<section id="slide-orgec0c45b">
+<h3 id="orgec0c45b">Example</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class Descriptor(object):
@@ -334,7 +334,6 @@ descr.__delete__(self, obj)  # -> None
     def __set__(self, obj, val):
         print('set', self.name)
         self.val = val
-
 
 class MyClass(object):
     attr = Descriptor(initval=10, name='attr')
@@ -381,8 +380,8 @@ get attr
 
 
 </section>
-<section id="slide-orge2b6083">
-<h3 id="orge2b6083">Example</h3>
+<section id="slide-org968dda8">
+<h3 id="org968dda8">Example</h3>
 <ul>
 <li>use descriptors to indirectly set values on <code>instance.__dict__</code></li>
 <li>if called from class, just return the descriptor class</li>
@@ -452,16 +451,16 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-org31bc063">
-<h2 id="org31bc063">Metaclasses &amp; descriptors</h2>
+<section id="slide-org9d25576">
+<h2 id="org9d25576">Metaclasses &amp; descriptors</h2>
 <ul>
 <li>attr = Descriptor('attr') -&gt; attr = Descriptor()</li>
 
 </ul>
 
 </section>
-<section id="slide-orgcf5f91f">
-<h3 id="orgcf5f91f">Example</h3>
+<section id="slide-orgd36cff8">
+<h3 id="orgd36cff8">Example</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class Descriptor(object):
@@ -523,12 +522,12 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-org1afb8a0">
-<h2 id="org1afb8a0">Attribute lookup</h2>
-<div class="outline-text-2" id="text-org1afb8a0">
+<section id="slide-org2ccebf2">
+<h2 id="org2ccebf2">Attribute lookup</h2>
+<div class="outline-text-2" id="text-org2ccebf2">
 </div></section>
-<section id="slide-orgee9720c">
-<h3 id="orgee9720c">Object-level (instance.attr)</h3>
+<section id="slide-org3cbd164">
+<h3 id="org3cbd164">Object-level (instance.attr)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Class.__dict__</code> and attr is data descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
 <li class="fragment appear">attr in <code>instance.__dict__</code> -&gt; <code>instance.__dict__['attr']</code></li>
@@ -540,8 +539,8 @@ get attr
 
 
 </section>
-<section id="slide-orgf4d110c">
-<h3 id="orgf4d110c">Class-level (Class.attr)</h3>
+<section id="slide-org6360737">
+<h3 id="org6360737">Class-level (Class.attr)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> and attr is data desciptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
 <li class="fragment appear">attr in <code>Class.__dict__</code> and attr is descriptor -&gt; <code>Class.__dict__['attr'].__get__(None, Class)</code></li>
@@ -551,8 +550,8 @@ get attr
 
 
 </section>
-<section id="slide-orge0d8f77">
-<h3 id="orge0d8f77">Class-level (cont.)</h3>
+<section id="slide-orgfc3f40a">
+<h3 id="orgfc3f40a">Class-level (cont.)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> <b>and</b> attr is <b>not</b> a descriptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> -&gt; <code>Metaclass.__dict__['attr']</code></li>
@@ -564,13 +563,14 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-orge1c2100">
-<h2 id="orge1c2100">Links</h2>
+<section id="slide-org05e621a">
+<h2 id="org05e621a">Links</h2>
 <ul>
-<li><a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/</a></li>
-<li><a href="https://docs.python.org/3/howto/descriptor.html">https://docs.python.org/3/howto/descriptor.html</a></li>
-<li><a href="https://www.youtube.com/watch?v=sPiWg5jSoZI">https://www.youtube.com/watch?v=sPiWg5jSoZI</a></li>
-<li><a href="https://www.python.org/dev/peps/pep-3115/">https://www.python.org/dev/peps/pep-3115/</a></li>
+<li><a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">Understanding Python metaclasses</a></li>
+<li><a href="https://docs.python.org/3/howto/descriptor.html">Descriptor HowTo Guide</a></li>
+<li><a href="https://www.youtube.com/watch?v=sPiWg5jSoZI">Dave Beazley: Python 3 Metaprogramming</a></li>
+<li><a href="https://www.python.org/dev/peps/pep-3115/">PEP 3115: Metaclasses in Python 3</a></li>
+<li><a href="https://github.com/alexpeits/metaclasses-pythonmeetup-hsgr">Presentation git repo</a></li>
 
 </ul>
 </section>

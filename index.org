@@ -249,7 +249,6 @@
           print('set', self.name)
           self.val = val
 
-
   class MyClass(object):
       attr = Descriptor(initval=10, name='attr')
 #+END_SRC
@@ -430,14 +429,14 @@
 - attr in =Metaclass.__dict__= -> =Metaclass.__dict__['attr']=
 - =Metaclass.__getattr__= exists -> =Metaclass.__getattr__('attr')=
 
-
+  
 * Links
 
-- https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/
-- https://docs.python.org/3/howto/descriptor.html
-- https://www.youtube.com/watch?v=sPiWg5jSoZI
-- https://www.python.org/dev/peps/pep-3115/
-
+- [[https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/][Understanding Python metaclasses]]
+- [[https://docs.python.org/3/howto/descriptor.html][Descriptor HowTo Guide]]
+- [[https://www.youtube.com/watch?v=sPiWg5jSoZI][Dave Beazley: Python 3 Metaprogramming]]
+- [[https://www.python.org/dev/peps/pep-3115/][PEP 3115: Metaclasses in Python 3]]
+- [[https://github.com/alexpeits/metaclasses-pythonmeetup-hsgr][Presentation git repo]]
 
 # Local Variables:
 # org-hide-emphasis-markers: t
