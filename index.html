@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="./static/reveal.js/css/theme/beige.css" id="theme"/>
 
 <link rel="stylesheet" href="./static/custom.css"/>
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css"/>
 <!-- If the query includes 'print-pdf', include the PDF print sheet -->
 <script>
     if( window.location.search.match( /print-pdf/gi ) ) {
@@ -31,29 +31,29 @@
 </section>
 
 <section>
-<section id="slide-orgb7b046b">
-<h2 id="orgb7b046b">Metaclasses</h2>
-<div class="outline-text-2" id="text-orgb7b046b">
+<section id="slide-orgf9550c0">
+<h2 id="orgf9550c0">Metaclasses</h2>
+<div class="outline-text-2" id="text-orgf9550c0">
 </div></section>
-<section id="slide-org259f341">
-<h3 id="org259f341">"type"</h3>
+<section id="slide-org079ae21">
+<h3 id="org079ae21">"type"</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyClass</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #859900; font-weight: bold;">pass</span>
+<pre><code class="python" >class MyClass(object):
+    pass
 
-MyClass            <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">__main__.MyClass</span>
-MyClass.__class__  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">type</span>
-<span style="color: #657b83; font-weight: bold;">type</span>(MyClass())    <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">__main__.MyClass</span>
-<span style="color: #657b83; font-weight: bold;">type</span>(MyClass)      <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">type</span>
-<span style="color: #657b83; font-weight: bold;">type</span>(<span style="color: #657b83; font-weight: bold;">object</span>)       <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">type</span>
-<span style="color: #657b83; font-weight: bold;">type</span>(<span style="color: #657b83; font-weight: bold;">type</span>)         <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">type</span>
+MyClass            # __main__.MyClass
+MyClass.__class__  # type
+type(MyClass())    # __main__.MyClass
+type(MyClass)      # type
+type(object)       # type
+type(type)         # type
 
-<span style="color: #93a1a1;">#      </span><span style="color: #93a1a1;">class     parent     class</span>
-<span style="color: #93a1a1;">#      </span><span style="color: #93a1a1;">name      classes    __dict__</span>
-<span style="color: #657b83; font-weight: bold;">type</span>( <span style="color: #2aa198;">'Klass'</span>,     (),        {}     )  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">__main__.Klass</span>
-<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">class Klass(object): pass</span>
-</pre>
+#      class     parent     class
+#      name      classes    __dict__
+type( 'Klass',     (),        {}     )  # __main__.Klass
+# class Klass(object): pass
+</code></pre>
 </div>
 
 </section>
@@ -61,18 +61,18 @@ MyClass.__class__  <span style="color: #93a1a1;"># </span><span style="color: #9
 
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">Klass = type('Klass', (), {})</span>
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Klass</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #859900; font-weight: bold;">pass</span>
+<pre><code class="python" ># Klass = type('Klass', (), {})
+class Klass(object):
+    pass
 
-<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">Klass2 = type('Klass2', (Klass, ), {})</span>
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Klass2</span>(Klass):
-    <span style="color: #859900; font-weight: bold;">pass</span>
+# Klass2 = type('Klass2', (Klass, ), {})
+class Klass2(Klass):
+    pass
 
-<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">Klass3 = type('Klass3', (Klass, Klass2), {'a': 42})</span>
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Klass3</span>(Klass, Klass2):
-    <span style="color: #268bd2;">a</span> = <span style="color: #6c71c4;">42</span>
-</pre>
+# Klass3 = type('Klass3', (Klass, Klass2), {'a': 42})
+class Klass3(Klass, Klass2):
+    a = 42
+</code></pre>
 </div>
 
 </section>
@@ -80,38 +80,38 @@ MyClass.__class__  <span style="color: #93a1a1;"># </span><span style="color: #9
 
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">Klass4 = type(</span>
-<span style="color: #93a1a1;">#   </span><span style="color: #93a1a1;">'Klass4',</span>
-<span style="color: #93a1a1;">#   </span><span style="color: #93a1a1;">(),</span>
-<span style="color: #93a1a1;">#   </span><span style="color: #93a1a1;">{</span>
-<span style="color: #93a1a1;">#       </span><span style="color: #93a1a1;">'a': 42,</span>
-<span style="color: #93a1a1;">#       </span><span style="color: #93a1a1;">'method': lambda instance, num: instance.a + num</span>
-<span style="color: #93a1a1;">#   </span><span style="color: #93a1a1;">}</span>
-<span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">)</span>
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Klass4</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #268bd2;">a</span> = <span style="color: #6c71c4;">42</span>
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">method</span>(<span style="color: #859900; font-weight: bold;">self</span>, x):
-        <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #859900; font-weight: bold;">self</span>.a + x
-</pre>
+<pre><code class="python" ># Klass4 = type(
+#   'Klass4',
+#   (),
+#   {
+#       'a': 42,
+#       'method': lambda instance, num: instance.a + num
+#   }
+# )
+class Klass4(object):
+    a = 42
+    def method(self, x):
+        return self.a + x
+</code></pre>
 </div>
 
 
 </section>
-<section id="slide-orgf5c8bbe">
-<h3 id="orgf5c8bbe">Metaclass API</h3>
+<section id="slide-orgebb0a9c">
+<h3 id="orgebb0a9c">Metaclass API</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python">Metaclass.__prepare__(mcls, name, bases, attrs)  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">classmethod</span>
+<pre><code class="python" >Metaclass.__prepare__(mcls, name, bases, attrs)  # classmethod
 Metaclass.__new__(mcls, name, bases, attrs, **kwargs)
 Metaclass.__init__(cls, name, bases, attrs, **kwargs)
 Metaclass.__call__(cls, *args, **kwargs)
-</pre>
+</code></pre>
 </div>
 
 
 </section>
-<section id="slide-org1b274dc">
-<h3 id="org1b274dc"><code>__prepare__</code></h3>
+<section id="slide-org1dbf6ee">
+<h3 id="org1dbf6ee"><code>__prepare__</code></h3>
 <ul>
 <li>returns dict-like object (empty or not)</li>
 <li>if not dict, must be converted to dict before <code>__new__</code> returns</li>
@@ -123,50 +123,179 @@ Metaclass.__call__(cls, *args, **kwargs)
 
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">OnlyUppercase</span>(<span style="color: #657b83; font-weight: bold;">dict</span>):
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__setitem__</span>(<span style="color: #859900; font-weight: bold;">self</span>, key, value):
-        <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #657b83; font-weight: bold;">isinstance</span>(key, <span style="color: #657b83; font-weight: bold;">str</span>) <span style="color: #859900; font-weight: bold;">and</span> key.isupper():
-            <span style="color: #657b83; font-weight: bold;">super</span>().__setitem__(key, value)
+<pre><code class="python" >class OnlyUppercase(dict):
+    def __setitem__(self, key, value):
+        if isinstance(key, str) and key.isupper():
+            super().__setitem__(key, value)
 
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyMeta</span>(<span style="color: #657b83; font-weight: bold;">type</span>):
-    <span style="color: #b58900;">@classmethod</span>
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__prepare__</span>(mcls, name, bases):
-        <span style="color: #859900; font-weight: bold;">return</span> OnlyUppercase()
+class MyMeta(type):
+    @classmethod
+    def __prepare__(mcls, name, bases):
+        return OnlyUppercase()
 
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__new__</span>(mcls, name, bases, attrs):
-        <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #657b83; font-weight: bold;">super</span>().__new__(mcls, name, bases, <span style="color: #657b83; font-weight: bold;">dict</span>(attrs))
+    def __new__(mcls, name, bases, attrs):
+        return super().__new__(mcls, name, bases, dict(attrs))
 
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyClass</span>(metaclass=MyMeta):
-    <span style="color: #268bd2;">a</span> = <span style="color: #6c71c4;">1</span>
-    <span style="color: #268bd2;">B</span> = <span style="color: #6c71c4;">2</span>
+class MyClass(metaclass=MyMeta):
+    a = 1
+    B = 2
 
-MyClass.__dict__  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">{..., 'B': 2} (no a)</span>
-</pre>
+MyClass.__dict__  # {..., 'B': 2} (no a)
+</code></pre>
 </div>
 
 
 </section>
-<section id="slide-org6ab97b7">
-<h3 id="org6ab97b7"><code>__new__</code></h3>
-
-</section>
-<section id="slide-org6a88a01">
-<h3 id="org6a88a01"><code>__init__</code></h3>
-
-</section>
-<section id="slide-org2c12dc4">
-<h3 id="org2c12dc4"><code>__call__</code></h3>
+<section id="slide-org096748b">
+<h3 id="org096748b"><code>__new__</code></h3>
 <ul>
-<li>object instantiation (before Class._<sub>init</sub>__)</li>
+<li><b>class</b> constructor (<code>class MyClass ...</code> -&gt; <code>__new__</code> runs)</li>
+<li>most useful</li>
 
 </ul>
 
 
 </section>
+<section id="slide-org5bf97a7">
+<h3 id="org5bf97a7"><code>__init__</code></h3>
+<ul>
+<li><b>class</b> initializer (after <code>__new__</code>)</li>
+<li>not generally useful</li>
+
+</ul>
+
+
+</section>
+<section id="slide-orgbf5e3c7">
+<h3 id="orgbf5e3c7"><code>__call__</code></h3>
+<ul>
+<li><b>object</b> instantiation (before <code>Class.__init__</code>)</li>
+
+</ul>
+
+<div class="org-src-container">
+
+<pre><code class="python" >class MyMeta(type):
+    def __call__(cls, *args, **kwargs):
+        print('In metaclass', args, kwargs)
+        return super().__call__(*args, **kwargs)
+
+class MyClass(metaclass=MyMeta):
+    def __init__(cls, *args, **kwargs):
+        print('In class', args, kwargs)
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="python" >>>> obj = MyClass(1, 2, foo=42)
+In metaclass (1, 2), {'foo': 42}
+In class (1, 2) {'foo': 42}
+</code></pre>
+</div>
+
+
+</section>
+<section id="slide-orgfbdac6b">
+<h3 id="orgfbdac6b">Call order</h3>
+<div class="org-src-container">
+
+<pre><code class="python" >class MyMeta(type):
+    @classmethod
+    def __prepare__(mcls, name, bases):
+        print('Meta __prepare__')
+        return super().__prepare__(mcls, name, bases)
+
+    def __new__(mcls, name, bases, attrs):
+        print('Meta __new__')
+        return super().__new__(mcls, name, bases, attrs)
+
+    def __init__(cls, name, bases, attrs):
+        print('Meta __init__')
+        return super().__init__(name, bases, attrs)
+
+    def __call__(cls, *args, **kwargs):
+        print('Meta __call__')
+        return super().__call__(*args, **kwargs)
+</code></pre>
+</div>
+
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="python" >class MyClass(metaclass=MyMeta):
+    def __new__(cls, *args, **kwargs):
+        print('Class __new__')
+        return super().__new__(cls)
+
+    def __init__(self, *args, **kwargs):
+        print('Class __init__')
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="python" >>>> obj = MyClass()
+Meta __prepare__
+Meta __new__
+Meta __init__
+Meta __call__
+Class __new__
+Class __init__
+</code></pre>
+</div>
+
+
+</section>
+<section id="slide-orgab1eefa">
+<h3 id="orgab1eefa">Example: singleton</h3>
+<div class="org-src-container">
+
+<pre><code class="python" >class SingletonMeta(type):
+
+    def __call__(cls, *args, **kwargs):
+        if not hasattr(cls, '_inst'):
+            obj = super(SingletonMeta, cls).__call__(*args, **kwargs)
+            cls._inst = obj
+        return cls._inst
+
+class MyClass(metaclass=SingletonMeta):
+    pass
+</code></pre>
+</div>
+
+<div class="org-src-container">
+
+<pre><code class="python" >>>> a = MyClass()
+>>> b = MyClass()
+>>> a is b
+True
+</code></pre>
+</div>
+
+
+</section>
+<section id="slide-org98d4709">
+<h3 id="org98d4709">Example: metaclass is a callable</h3>
+<div class="org-src-container">
+
+<pre><code class="python" >>>> class MyClass(metaclass=print):
+...     pass
+...
+MyClass () {'__qualname__': 'MyClass', '__module__': '__main__'}
+>>> MyClass is None
+True
+</code></pre>
+</div>
+
+
+</section>
 </section>
 <section>
-<section id="slide-org43e90ce">
-<h2 id="org43e90ce">Descriptors</h2>
+<section id="slide-org3d1a31b">
+<h2 id="org3d1a31b">Descriptors</h2>
 <ul>
 <li>only defined in class-level (not in <code>__init__</code> etc.)</li>
 <li>objects with <code>__get__</code>, <code>__set__</code> &amp; <code>__delete__</code> methods</li>
@@ -175,54 +304,41 @@ MyClass.__dict__  <span style="color: #93a1a1;"># </span><span style="color: #93
 
 </ul>
 
+
 </section>
-<section id="slide-org503fbd0">
-<h3 id="org503fbd0">Descriptor API</h3>
+<section id="slide-orgdcc8d42">
+<h3 id="orgdcc8d42">Descriptor API</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python">descr.__get__(<span style="color: #859900; font-weight: bold;">self</span>, obj, <span style="color: #657b83; font-weight: bold;">type</span>=<span style="color: #268bd2; font-weight: bold;">None</span>)  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">-&gt; value</span>
-descr.__set__(<span style="color: #859900; font-weight: bold;">self</span>, obj, value)  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">-&gt; None</span>
-descr.__delete__(<span style="color: #859900; font-weight: bold;">self</span>, obj)  <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">-&gt; None</span>
-</pre>
+<pre><code class="python" >descr.__get__(self, obj, type=None)  # -> value
+descr.__set__(self, obj, value)  # -> None
+descr.__delete__(self, obj)  # -> None
+</code></pre>
 </div>
 
-</section>
-<section id="slide-org2eff838">
-<h3 id="org2eff838">Example</h3>
-<div class="org-src-container">
-
-<pre  class="src src-python"><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Descriptor</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900; font-weight: bold;">self</span>, initval=<span style="color: #268bd2; font-weight: bold;">None</span>, name=<span style="color: #2aa198;">'var'</span>):
-        <span style="color: #859900; font-weight: bold;">self</span>.val = initval
-        <span style="color: #859900; font-weight: bold;">self</span>.name = name
-
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__get__</span>(<span style="color: #859900; font-weight: bold;">self</span>, obj, cls):
-        <span style="color: #859900; font-weight: bold;">print</span>(<span style="color: #2aa198;">'get'</span>, <span style="color: #859900; font-weight: bold;">self</span>.name)
-        <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #859900; font-weight: bold;">self</span>.val
-
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__set__</span>(<span style="color: #859900; font-weight: bold;">self</span>, obj, val):
-        <span style="color: #859900; font-weight: bold;">print</span>(<span style="color: #2aa198;">'set'</span>, <span style="color: #859900; font-weight: bold;">self</span>.name)
-        <span style="color: #859900; font-weight: bold;">self</span>.val = val
-
-
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyClass</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #268bd2;">attr</span> = Descriptor(initval=<span style="color: #6c71c4;">10</span>, name=<span style="color: #2aa198;">'attr'</span>)
-</pre>
-</div>
 
 </section>
-<section >
-
+<section id="slide-org8bf9ae3">
+<h3 id="org8bf9ae3">Example</h3>
 <div class="org-src-container">
 
-<pre  class="src src-ipython">&gt;&gt;&gt; MyClass.attr
-get attr
-<span style="color: #6c71c4;">10</span>
-&gt;&gt;&gt; <span style="color: #268bd2;">MyClass.attr</span> = <span style="color: #6c71c4;">11</span>
-&gt;&gt;&gt; MyClass.attr
-<span style="color: #6c71c4;">11</span>
-&gt;&gt;&gt; <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">oops</span>
-</pre>
+<pre><code class="python" >class Descriptor(object):
+    def __init__(self, initval=None, name='var'):
+        self.val = initval
+        self.name = name
+
+    def __get__(self, obj, cls):
+        print('get', self.name)
+        return self.val
+
+    def __set__(self, obj, val):
+        print('set', self.name)
+        self.val = val
+
+
+class MyClass(object):
+    attr = Descriptor(initval=10, name='attr')
+</code></pre>
 </div>
 
 </section>
@@ -230,28 +346,43 @@ get attr
 
 <div class="org-src-container">
 
-<pre  class="src src-ipython">&gt;&gt;&gt; <span style="color: #268bd2;">a</span> = MyClass()
-&gt;&gt;&gt; a.attr
+<pre><code class="python" >>>> MyClass.attr
 get attr
-<span style="color: #6c71c4;">10</span>
-&gt;&gt;&gt; <span style="color: #268bd2;">a.attr</span> = <span style="color: #6c71c4;">11</span>
-<span style="color: #657b83; font-weight: bold;">set</span> attr
-&gt;&gt;&gt; a.attr
-get attr
-<span style="color: #6c71c4;">11</span>
+10
+>>> MyClass.attr = 11
+>>> MyClass.attr
+11
+>>> # oops
+</code></pre>
+</div>
 
-&gt;&gt;&gt; <span style="color: #268bd2;">b</span> = MyClass()
-&gt;&gt;&gt; b.attr
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="ipython" >>>> a = MyClass()
+>>> a.attr
 get attr
-<span style="color: #6c71c4;">11</span>
-&gt;&gt;&gt; <span style="color: #93a1a1;"># </span><span style="color: #93a1a1;">wat</span>
-</pre>
+10
+>>> a.attr = 11
+set attr
+>>> a.attr
+get attr
+11
+
+>>> b = MyClass()
+>>> b.attr
+get attr
+11
+>>> # wat
+</code></pre>
 </div>
 
 
 </section>
-<section id="slide-org02f9eae">
-<h3 id="org02f9eae">Example</h3>
+<section id="slide-orge2b6083">
+<h3 id="orge2b6083">Example</h3>
 <ul>
 <li>use descriptors to indirectly set values on <code>instance.__dict__</code></li>
 <li>if called from class, just return the descriptor class</li>
@@ -263,26 +394,26 @@ get attr
 
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Descriptor</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900; font-weight: bold;">self</span>, name):
-        <span style="color: #859900; font-weight: bold;">self</span>.name = name
+<pre><code class="python" >class Descriptor(object):
+    def __init__(self, name):
+        self.name = name
 
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__get__</span>(<span style="color: #859900; font-weight: bold;">self</span>, obj, cls):
-        <span style="color: #859900; font-weight: bold;">if</span> obj <span style="color: #859900; font-weight: bold;">is</span> <span style="color: #268bd2; font-weight: bold;">None</span>:
-            <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #859900; font-weight: bold;">self</span>
-        <span style="color: #859900; font-weight: bold;">try</span>:
-            <span style="color: #859900; font-weight: bold;">print</span>(<span style="color: #2aa198;">'get'</span>, <span style="color: #859900; font-weight: bold;">self</span>.name)
-            <span style="color: #859900; font-weight: bold;">return</span> obj.__dict__[<span style="color: #859900; font-weight: bold;">self</span>.name]
-        <span style="color: #859900; font-weight: bold;">except</span> <span style="color: #b58900;">KeyError</span>:
-            <span style="color: #859900; font-weight: bold;">raise</span> <span style="color: #b58900;">AttributeError</span>()
+    def __get__(self, obj, cls):
+        if obj is None:
+            return self
+        try:
+            print('get', self.name)
+            return obj.__dict__[self.name]
+        except KeyError:
+            raise AttributeError()
 
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__set__</span>(<span style="color: #859900; font-weight: bold;">self</span>, obj, val):
-        <span style="color: #859900; font-weight: bold;">print</span>(<span style="color: #2aa198;">'set'</span>, <span style="color: #859900; font-weight: bold;">self</span>.name)
-        <span style="color: #268bd2;">obj.__dict__</span>[<span style="color: #859900; font-weight: bold;">self</span>.name] = val
+    def __set__(self, obj, val):
+        print('set', self.name)
+        obj.__dict__[self.name] = val
 
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyClass</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #268bd2;">attr</span>  = Descriptor(<span style="color: #2aa198;">'attr'</span>)
-</pre>
+class MyClass(object):
+    attr  = Descriptor('attr')
+</code></pre>
 </div>
 
 </section>
@@ -290,66 +421,66 @@ get attr
 
 <div class="org-src-container">
 
-<pre  class="src src-ipython">&gt;&gt;&gt; MyClass.attr
-&lt;__main__.Descriptor at <span style="color: #6c71c4;">0x312</span>....&gt;
-&gt;&gt;&gt;
-&gt;&gt;&gt; <span style="color: #268bd2;">a</span> = MyClass()
-&gt;&gt;&gt; a.attr
+<pre><code class="ipython" >>>> MyClass.attr
+<__main__.Descriptor at 0x312....>
+>>>
+>>> a = MyClass()
+>>> a.attr
 get attr
 Traceback (most recent call last)
 ....
-<span style="color: #b58900;">AttributeError</span>: ...
-&gt;&gt;&gt; <span style="color: #268bd2;">a.attr</span> = <span style="color: #6c71c4;">1</span>
-<span style="color: #657b83; font-weight: bold;">set</span> attr
-&gt;&gt;&gt; a.attr
+AttributeError: ...
+>>> a.attr = 1
+set attr
+>>> a.attr
 get attr
-<span style="color: #6c71c4;">1</span>
-&gt;&gt;&gt;
-&gt;&gt;&gt; <span style="color: #268bd2;">b</span> = MyClass()
-&gt;&gt;&gt; <span style="color: #268bd2;">b.attr</span> = <span style="color: #6c71c4;">2</span>
-<span style="color: #657b83; font-weight: bold;">set</span> attr
-&gt;&gt;&gt; b.attr
+1
+>>>
+>>> b = MyClass()
+>>> b.attr = 2
+set attr
+>>> b.attr
 get attr
-<span style="color: #6c71c4;">2</span>
-&gt;&gt;&gt; a.attr
+2
+>>> a.attr
 get attr
-<span style="color: #6c71c4;">1</span>
-</pre>
+1
+</code></pre>
 </div>
 
 
 </section>
 </section>
 <section>
-<section id="slide-org9da82ef">
-<h2 id="org9da82ef">Metaclasses &amp; descriptors</h2>
+<section id="slide-org31bc063">
+<h2 id="org31bc063">Metaclasses &amp; descriptors</h2>
 <ul>
 <li>attr = Descriptor('attr') -&gt; attr = Descriptor()</li>
 
 </ul>
 
 </section>
-<section id="slide-org7262614">
-<h3 id="org7262614">Example</h3>
+<section id="slide-orgcf5f91f">
+<h3 id="orgcf5f91f">Example</h3>
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">Descriptor</span>(<span style="color: #657b83; font-weight: bold;">object</span>):
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__init__</span>(<span style="color: #859900; font-weight: bold;">self</span>):
-        <span style="color: #859900; font-weight: bold;">self</span>.name = <span style="color: #268bd2; font-weight: bold;">None</span>
+<pre><code class="python" >class Descriptor(object):
+    def __init__(self):
+        self.name = None
 
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__get__</span>(<span style="color: #859900; font-weight: bold;">self</span>, obj, cls):
-        <span style="color: #859900; font-weight: bold;">if</span> obj <span style="color: #859900; font-weight: bold;">is</span> <span style="color: #268bd2; font-weight: bold;">None</span>:
-            <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #859900; font-weight: bold;">self</span>
-        <span style="color: #859900; font-weight: bold;">try</span>:
-            <span style="color: #859900; font-weight: bold;">print</span>(<span style="color: #2aa198;">'get'</span>, <span style="color: #859900; font-weight: bold;">self</span>.name)
-            <span style="color: #859900; font-weight: bold;">return</span> obj.__dict__[<span style="color: #859900; font-weight: bold;">self</span>.name]
-        <span style="color: #859900; font-weight: bold;">except</span> <span style="color: #b58900;">KeyError</span>:
-            <span style="color: #859900; font-weight: bold;">raise</span> <span style="color: #b58900;">AttributeError</span>()
+    def __get__(self, obj, cls):
+        if obj is None:
+            return self
+        try:
+            print('get', self.name)
+            return obj.__dict__[self.name]
+        except KeyError:
+            raise AttributeError()
 
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__set__</span>(<span style="color: #859900; font-weight: bold;">self</span>, obj, val):
-        <span style="color: #859900; font-weight: bold;">print</span>(<span style="color: #2aa198;">'set'</span>, <span style="color: #859900; font-weight: bold;">self</span>.name)
-        <span style="color: #268bd2;">obj.__dict__</span>[<span style="color: #859900; font-weight: bold;">self</span>.name] = val
-</pre>
+    def __set__(self, obj, val):
+        print('set', self.name)
+        obj.__dict__[self.name] = val
+</code></pre>
 </div>
 
 </section>
@@ -357,16 +488,16 @@ get attr
 
 <div class="org-src-container">
 
-<pre  class="src src-python"><span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyMeta</span>(<span style="color: #657b83; font-weight: bold;">type</span>):
-    <span style="color: #859900; font-weight: bold;">def</span> <span style="color: #268bd2;">__new__</span>(mcls, name, bases, attrs):
-        <span style="color: #859900; font-weight: bold;">for</span> k, v <span style="color: #859900; font-weight: bold;">in</span> attrs.items():
-            <span style="color: #859900; font-weight: bold;">if</span> <span style="color: #657b83; font-weight: bold;">isinstance</span>(v, Descriptor):
-                <span style="color: #268bd2;">v.name</span> = k
-        <span style="color: #859900; font-weight: bold;">return</span> <span style="color: #657b83; font-weight: bold;">super</span>().__new__(mcls, name, bases, attrs)
+<pre><code class="python" >class MyMeta(type):
+    def __new__(mcls, name, bases, attrs):
+        for k, v in attrs.items():
+            if isinstance(v, Descriptor):
+                v.name = k
+        return super().__new__(mcls, name, bases, attrs)
 
-<span style="color: #859900; font-weight: bold;">class</span> <span style="color: #b58900;">MyClass</span>(metaclass=MyMeta):
-    <span style="color: #268bd2;">attr</span>  = Descriptor()
-</pre>
+class MyClass(metaclass=MyMeta):
+    attr  = Descriptor()
+</code></pre>
 </div>
 
 </section>
@@ -374,30 +505,30 @@ get attr
 
 <div class="org-src-container">
 
-<pre  class="src src-ipython">&gt;&gt;&gt; MyClass.attr
-&lt;__main__.Descriptor at <span style="color: #6c71c4;">0x312</span>....&gt;
-&gt;&gt;&gt;
-&gt;&gt;&gt; <span style="color: #268bd2;">a</span> = MyClass()
-&gt;&gt;&gt; <span style="color: #268bd2;">a.attr</span> = <span style="color: #6c71c4;">1</span>
-<span style="color: #657b83; font-weight: bold;">set</span> attr
-&gt;&gt;&gt; a.attr
+<pre><code class="ipython" >>>> MyClass.attr
+<__main__.Descriptor at 0x312....>
+>>>
+>>> a = MyClass()
+>>> a.attr = 1
+set attr
+>>> a.attr
 get attr
-<span style="color: #6c71c4;">1</span>
-&gt;&gt;&gt; a.__dict__
-{<span style="color: #2aa198;">'attr'</span>: <span style="color: #6c71c4;">1</span>}
-</pre>
+1
+>>> a.__dict__
+{'attr': 1}
+</code></pre>
 </div>
 
 
 </section>
 </section>
 <section>
-<section id="slide-org02c94b6">
-<h2 id="org02c94b6">Attribute lookup</h2>
-<div class="outline-text-2" id="text-org02c94b6">
+<section id="slide-org1afb8a0">
+<h2 id="org1afb8a0">Attribute lookup</h2>
+<div class="outline-text-2" id="text-org1afb8a0">
 </div></section>
-<section id="slide-org071a6ae">
-<h3 id="org071a6ae">Object-level (instance.attr)</h3>
+<section id="slide-orgee9720c">
+<h3 id="orgee9720c">Object-level (instance.attr)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Class.__dict__</code> and attr is data descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
 <li class="fragment appear">attr in <code>instance.__dict__</code> -&gt; <code>instance.__dict__['attr']</code></li>
@@ -407,9 +538,10 @@ get attr
 
 </ul>
 
+
 </section>
-<section id="slide-org240e4fb">
-<h3 id="org240e4fb">Class-level (Class.attr)</h3>
+<section id="slide-orgf4d110c">
+<h3 id="orgf4d110c">Class-level (Class.attr)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> and attr is data desciptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
 <li class="fragment appear">attr in <code>Class.__dict__</code> and attr is descriptor -&gt; <code>Class.__dict__['attr'].__get__(None, Class)</code></li>
@@ -417,9 +549,10 @@ get attr
 
 </ul>
 
+
 </section>
-<section id="slide-orgc070dd4">
-<h3 id="orgc070dd4">Class-level (cont.)</h3>
+<section id="slide-orge0d8f77">
+<h3 id="orge0d8f77">Class-level (cont.)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> <b>and</b> attr is <b>not</b> a descriptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> -&gt; <code>Metaclass.__dict__['attr']</code></li>
@@ -431,8 +564,8 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-orgc97ed31">
-<h2 id="orgc97ed31">Links</h2>
+<section id="slide-orge1c2100">
+<h2 id="orge1c2100">Links</h2>
 <ul>
 <li><a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/</a></li>
 <li><a href="https://docs.python.org/3/howto/descriptor.html">https://docs.python.org/3/howto/descriptor.html</a></li>
@@ -472,6 +605,7 @@ multiplex: {
 
 // Optional libraries used to extend on reveal.js
 dependencies: [
+ { src: './static/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
  { src: './static/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
  { src: './static/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
  { src: './static/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },

@@ -1,6 +1,22 @@
 .reveal li {
   font-size: 80%;
 }
-.reveal .slides > section { text-align:left; }
-.reveal blockquote { box-shadow: none; }
-.reveal pre { margin-left: 0px; margin-right: 0px; }
+
+.reveal pre code {
+  font-size: 90%;
+  max-height: 2000px;
+  font-family: 'Source Code Pro', monospace;
+}
+
+.reveal .slides > section {
+  text-align:left;
+}
+
+.reveal blockquote {
+  box-shadow: none;
+}
+
+.reveal pre {
+  margin-left: 0px;
+  margin-right: 0px;
+}

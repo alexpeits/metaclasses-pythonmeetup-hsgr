@@ -4,9 +4,12 @@
 #+REVEAL_THeme: beige
 #+REVEAL_EXTRA_CSS: ./static/custom.css
 #+REVEAL_ROOT: ./static/reveal.js
+#+REVEAL_PLUGINS: (highlight classList markdown zoom notes)
+#+REVEAL_HIGHLIGHT_CSS: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css
 
 * Metaclasses
   
+
 ** "type"
 
 #+BEGIN_SRC python
@@ -101,11 +104,116 @@
 
 ** =__new__=
 
+- *class* constructor (=class MyClass ...= -> =__new__= runs)
+- most useful
+
+
 ** =__init__=
+
+- *class* initializer (after =__new__=)
+- not generally useful
+
 
 ** =__call__=
 
-- object instantiation (before Class.__init__)
+- *object* instantiation (before =Class.__init__=)
+  
+#+BEGIN_SRC python
+  class MyMeta(type):
+      def __call__(cls, *args, **kwargs):
+          print('In metaclass', args, kwargs)
+          return super().__call__(*args, **kwargs)
+
+  class MyClass(metaclass=MyMeta):
+      def __init__(cls, *args, **kwargs):
+          print('In class', args, kwargs)
+#+END_SRC
+
+#+BEGIN_SRC python
+  >>> obj = MyClass(1, 2, foo=42)
+  In metaclass (1, 2), {'foo': 42}
+  In class (1, 2) {'foo': 42}
+#+END_SRC
+
+
+** Call order
+   
+#+BEGIN_SRC python
+  class MyMeta(type):
+      @classmethod
+      def __prepare__(mcls, name, bases):
+          print('Meta __prepare__')
+          return super().__prepare__(mcls, name, bases)
+
+      def __new__(mcls, name, bases, attrs):
+          print('Meta __new__')
+          return super().__new__(mcls, name, bases, attrs)
+
+      def __init__(cls, name, bases, attrs):
+          print('Meta __init__')
+          return super().__init__(name, bases, attrs)
+
+      def __call__(cls, *args, **kwargs):
+          print('Meta __call__')
+          return super().__call__(*args, **kwargs)
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  class MyClass(metaclass=MyMeta):
+      def __new__(cls, *args, **kwargs):
+          print('Class __new__')
+          return super().__new__(cls)
+
+      def __init__(self, *args, **kwargs):
+          print('Class __init__')
+#+END_SRC
+
+#+BEGIN_SRC python
+  >>> obj = MyClass()
+  Meta __prepare__
+  Meta __new__
+  Meta __init__
+  Meta __call__
+  Class __new__
+  Class __init__
+#+END_SRC
+
+
+** Example: singleton
+
+#+BEGIN_SRC python
+  class SingletonMeta(type):
+
+      def __call__(cls, *args, **kwargs):
+          if not hasattr(cls, '_inst'):
+              obj = super(SingletonMeta, cls).__call__(*args, **kwargs)
+              cls._inst = obj
+          return cls._inst
+
+  class MyClass(metaclass=SingletonMeta):
+      pass
+#+END_SRC
+
+#+BEGIN_SRC python
+  >>> a = MyClass()
+  >>> b = MyClass()
+  >>> a is b
+  True
+#+END_SRC
+
+
+** Example: metaclass is a callable
+   
+#+BEGIN_SRC python
+  >>> class MyClass(metaclass=print):
+  ...     pass
+  ...
+  MyClass () {'__qualname__': 'MyClass', '__module__': '__main__'}
+  >>> MyClass is None
+  True
+#+END_SRC
 
 
 * Descriptors
@@ -115,6 +223,7 @@
 - =__get__= & =__set__= = data descriptors
 - only =__get__= = non-data descriptors
   
+
 ** Descriptor API
 
 #+BEGIN_SRC python
@@ -123,6 +232,7 @@
   descr.__delete__(self, obj)  # -> None
 #+END_SRC
   
+
 ** Example
    
 #+BEGIN_SRC python
@@ -146,7 +256,7 @@
 
 #+REVEAL: split
 
-#+BEGIN_SRC ipython
+#+BEGIN_SRC python
   >>> MyClass.attr
   get attr
   10
@@ -294,6 +404,7 @@
 
 * Attribute lookup
   
+
 ** Object-level (instance.attr)
 
 #+ATTR_REVEAL: :frag (appear)
@@ -303,12 +414,14 @@
 - attr in =Class.__dict__= -> =Class.__dict__['attr']=
 - =Class.__getattr__= exists -> =Class.__getattr__('attr')=
    
+
 ** Class-level (Class.attr)
 
 #+ATTR_REVEAL: :frag (appear)
 - attr in =Metaclass.__dict__= and attr is data desciptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
 - attr in =Class.__dict__= and attr is descriptor -> =Class.__dict__['attr'].__get__(None, Class)=
 - attr in =Class.__dict__= -> =Class.__dict__['attr']=
+
 
 ** Class-level (cont.)
 
