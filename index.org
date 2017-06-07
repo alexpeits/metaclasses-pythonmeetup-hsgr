@@ -10,7 +10,7 @@
 * Metaclasses
   
 
-** "type"
+** type
 
 #+BEGIN_SRC python
   class MyClass(object):
@@ -32,15 +32,32 @@
 #+REVEAL: split
 
 #+BEGIN_SRC python
-  # Klass = type('Klass', (), {})
+  Klass = type('Klass', (), {})
+#+END_SRC
+
+#+BEGIN_SRC python
   class Klass(object):
       pass
+#+END_SRC
 
-  # Klass2 = type('Klass2', (Klass, ), {})
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  Klass2 = type('Klass2', (Klass, ), {})
+#+END_SRC
+
+#+BEGIN_SRC python
   class Klass2(Klass):
       pass
+#+END_SRC
 
-  # Klass3 = type('Klass3', (Klass, Klass2), {'a': 42})
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  Klass3 = type('Klass3', (Klass, Klass2), {'a': 42})
+#+END_SRC
+
+#+BEGIN_SRC python
   class Klass3(Klass, Klass2):
       a = 42
 #+END_SRC
@@ -48,14 +65,14 @@
 #+REVEAL: split
 
 #+BEGIN_SRC python
-  # Klass4 = type(
-  #   'Klass4',
-  #   (),
-  #   {
-  #       'a': 42,
-  #       'method': lambda instance, num: instance.a + num
-  #   }
-  # )
+  Klass4 = type(
+    'Klass4',
+    (),
+    {'a': 42, 'method': lambda self, num: self.a + num}
+  )
+#+END_SRC
+
+#+BEGIN_SRC python
   class Klass4(object):
       a = 42
       def method(self, x):
@@ -78,7 +95,7 @@
 - returns dict-like object (empty or not)
 - if not dict, must be converted to dict before =__new__= returns
 
-#+REVEAL: split
+*** Example: Allow only uppercase attribute names
   
 #+BEGIN_SRC python
   class OnlyUppercase(dict):
@@ -136,7 +153,7 @@
 #+END_SRC
 
 
-** Call order
+** Example: Call order
    
 #+BEGIN_SRC python
   class MyMeta(type):
@@ -161,20 +178,19 @@
 #+REVEAL: split
 
 #+BEGIN_SRC python
-  class MyClass(metaclass=MyMeta):
-      def __new__(cls, *args, **kwargs):
-          print('Class __new__')
-          return super().__new__(cls)
+  >>> class MyClass(metaclass=MyMeta):
+  ...   def __new__(cls, *args, **kwargs):
+  ...       print('Class __new__')
+  ...       return super().__new__(cls)
 
-      def __init__(self, *args, **kwargs):
-          print('Class __init__')
-#+END_SRC
-
-#+BEGIN_SRC python
-  >>> obj = MyClass()
+  ...   def __init__(self, *args, **kwargs):
+  ...       print('Class __init__')
+  ...
   Meta __prepare__
   Meta __new__
   Meta __init__
+  >>>
+  >>> obj = MyClass()
   Meta __call__
   Class __new__
   Class __init__
@@ -222,6 +238,7 @@
 - objects with =__get__=, =__set__= & =__delete__= methods
 - =__get__= & =__set__= = data descriptors
 - only =__get__= = non-data descriptors
+- e.g. =property= decorator (getter & setter)
   
 
 ** Descriptor API
