@@ -31,12 +31,12 @@
 </section>
 
 <section>
-<section id="slide-orgbf8aaf5">
-<h2 id="orgbf8aaf5">Metaclasses</h2>
-<div class="outline-text-2" id="text-orgbf8aaf5">
+<section id="slide-orgd8c3b10">
+<h2 id="orgd8c3b10">Metaclasses</h2>
+<div class="outline-text-2" id="text-orgd8c3b10">
 </div></section>
-<section id="slide-org2b403d9">
-<h3 id="org2b403d9">type</h3>
+<section id="slide-org2583264">
+<h3 id="org2583264">type</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class MyClass(object):
@@ -57,6 +57,7 @@ type( 'Klass',     (),        {}     )  # __main__.Klass
 </div>
 
 </section>
+<section >
 
 <div class="org-src-container">
 
@@ -72,6 +73,7 @@ type( 'Klass',     (),        {}     )  # __main__.Klass
 </div>
 
 </section>
+<section >
 
 <div class="org-src-container">
 
@@ -87,6 +89,7 @@ type( 'Klass',     (),        {}     )  # __main__.Klass
 </div>
 
 </section>
+<section >
 
 <div class="org-src-container">
 
@@ -102,6 +105,7 @@ type( 'Klass',     (),        {}     )  # __main__.Klass
 </div>
 
 </section>
+<section >
 
 <div class="org-src-container">
 
@@ -124,8 +128,8 @@ type( 'Klass',     (),        {}     )  # __main__.Klass
 
 
 </section>
-<section id="slide-orga199bfd">
-<h3 id="orga199bfd">Metaclass API</h3>
+<section id="slide-org45164d0">
+<h3 id="org45164d0">Metaclass API</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >Metaclass.__prepare__(mcls, name, bases, attrs)  # classmethod
@@ -137,8 +141,8 @@ Metaclass.__call__(cls, *args, **kwargs)
 
 
 </section>
-<section id="slide-orgdfd5c22">
-<h3 id="orgdfd5c22"><code>__prepare__</code></h3>
+<section id="slide-org26e419b">
+<h3 id="org26e419b"><code>__prepare__</code></h3>
 <ul>
 <li>returns dict-like object (empty or not)</li>
 <li>if not dict, must be converted to dict before <code>__new__</code> returns</li>
@@ -146,8 +150,8 @@ Metaclass.__call__(cls, *args, **kwargs)
 </ul>
 
 </section>
-<section id="slide-org8a2c5a5">
-<h4 id="org8a2c5a5">Example: Allow only uppercase attribute names</h4>
+<section id="slide-orga7b6109">
+<h4 id="orga7b6109">Example: Allow only uppercase attribute names</h4>
 <div class="org-src-container">
 
 <pre><code class="python" >class OnlyUppercase(dict):
@@ -173,8 +177,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-org87641a7">
-<h3 id="org87641a7"><code>__new__</code></h3>
+<section id="slide-org030c060">
+<h3 id="org030c060"><code>__new__</code></h3>
 <ul>
 <li><b>class</b> constructor (<code>class MyClass ...</code> -&gt; <code>__new__</code> runs)</li>
 <li>most useful</li>
@@ -183,8 +187,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-orgdea10b8">
-<h3 id="orgdea10b8"><code>__init__</code></h3>
+<section id="slide-org13bfae8">
+<h3 id="org13bfae8"><code>__init__</code></h3>
 <ul>
 <li><b>class</b> initializer (after <code>__new__</code>)</li>
 <li>not generally useful</li>
@@ -193,8 +197,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-org1bd3c89">
-<h3 id="org1bd3c89"><code>__call__</code></h3>
+<section id="slide-orga91f832">
+<h3 id="orga91f832"><code>__call__</code></h3>
 <ul>
 <li><b>object</b> instantiation (before <code>Class.__new__</code> &amp; <code>Class.__init__</code>)</li>
 
@@ -223,8 +227,8 @@ In class (1, 2) {'foo': 42}
 
 
 </section>
-<section id="slide-org8ac0e4e">
-<h3 id="org8ac0e4e">Example: Call order</h3>
+<section id="slide-orga1a1210">
+<h3 id="orga1a1210">Example: Call order</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class MyMeta(type):
@@ -273,8 +277,8 @@ Class __init__
 
 
 </section>
-<section id="slide-org5a4c912">
-<h3 id="org5a4c912">Example: singleton</h3>
+<section id="slide-orgf666468">
+<h3 id="orgf666468">Example: singleton</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class SingletonMeta(type):
@@ -301,8 +305,8 @@ True
 
 
 </section>
-<section id="slide-org717a133">
-<h3 id="org717a133">Example: metaclass is a callable</h3>
+<section id="slide-org98575b3">
+<h3 id="org98575b3">Example: metaclass is a callable</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >>>> class MyClass(metaclass=print):
@@ -318,8 +322,8 @@ True
 </section>
 </section>
 <section>
-<section id="slide-org09cdbe6">
-<h2 id="org09cdbe6">Descriptors</h2>
+<section id="slide-org4ad71a3">
+<h2 id="org4ad71a3">Descriptors</h2>
 <ul>
 <li>only defined in class-level (not in <code>__init__</code> etc.)</li>
 <li>objects with <code>__get__</code>, <code>__set__</code> &amp; <code>__delete__</code> methods</li>
@@ -331,8 +335,8 @@ True
 
 
 </section>
-<section id="slide-orgaca2d7d">
-<h3 id="orgaca2d7d">Descriptor API</h3>
+<section id="slide-org51f44de">
+<h3 id="org51f44de">Descriptor API</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >descr.__get__(self, obj, type=None)  # -> value
@@ -343,8 +347,8 @@ descr.__delete__(self, obj)  # -> None
 
 
 </section>
-<section id="slide-orgf43f231">
-<h3 id="orgf43f231">Example</h3>
+<section id="slide-org8b6cc9f">
+<h3 id="org8b6cc9f">Example</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class Descriptor(object):
@@ -405,8 +409,8 @@ get attr
 
 
 </section>
-<section id="slide-orgd29ca51">
-<h3 id="orgd29ca51">Example</h3>
+<section id="slide-org1952f29">
+<h3 id="org1952f29">Example</h3>
 <ul>
 <li>use descriptors to indirectly set values on <code>instance.__dict__</code></li>
 <li>if called from class, just return the descriptor class</li>
@@ -476,16 +480,16 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-orgf133aae">
-<h2 id="orgf133aae">Metaclasses &amp; descriptors</h2>
+<section id="slide-org8706ca5">
+<h2 id="org8706ca5">Metaclasses &amp; descriptors</h2>
 <ul>
 <li><code>attr = Descriptor('attr')</code> -&gt; <code>attr = Descriptor()</code></li>
 
 </ul>
 
 </section>
-<section id="slide-org7dec965">
-<h3 id="org7dec965">Example</h3>
+<section id="slide-orgd597184">
+<h3 id="orgd597184">Example</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class Descriptor(object):
@@ -547,12 +551,12 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-org3172a11">
-<h2 id="org3172a11">Attribute lookup</h2>
-<div class="outline-text-2" id="text-org3172a11">
+<section id="slide-org8fc1eee">
+<h2 id="org8fc1eee">Attribute lookup</h2>
+<div class="outline-text-2" id="text-org8fc1eee">
 </div></section>
-<section id="slide-orgd12ac85">
-<h3 id="orgd12ac85">Object-level (instance.attr)</h3>
+<section id="slide-org18c1d02">
+<h3 id="org18c1d02">Object-level (instance.attr)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Class.__dict__</code> and attr is data descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
 <li class="fragment appear">attr in <code>instance.__dict__</code> -&gt; <code>instance.__dict__['attr']</code></li>
@@ -564,8 +568,8 @@ get attr
 
 
 </section>
-<section id="slide-org45ab56b">
-<h3 id="org45ab56b">Class-level (Class.attr)</h3>
+<section id="slide-orge3c9221">
+<h3 id="orge3c9221">Class-level (Class.attr)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> and attr is data desciptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
 <li class="fragment appear">attr in <code>Class.__dict__</code> and attr is descriptor -&gt; <code>Class.__dict__['attr'].__get__(None, Class)</code></li>
@@ -575,8 +579,8 @@ get attr
 
 
 </section>
-<section id="slide-org832be51">
-<h3 id="org832be51">Class-level (cont.)</h3>
+<section id="slide-org5c9bb8b">
+<h3 id="org5c9bb8b">Class-level (cont.)</h3>
 <ul>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> <b>and</b> attr is <b>not</b> a descriptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
 <li class="fragment appear">attr in <code>Metaclass.__dict__</code> -&gt; <code>Metaclass.__dict__['attr']</code></li>
@@ -588,8 +592,8 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-orge8c95b7">
-<h2 id="orge8c95b7">Links</h2>
+<section id="slide-org0d808b5">
+<h2 id="org0d808b5">Links</h2>
 <ul>
 <li><a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">Understanding Python metaclasses</a></li>
 <li><a href="https://docs.python.org/3/howto/descriptor.html">Descriptor HowTo Guide</a></li>
