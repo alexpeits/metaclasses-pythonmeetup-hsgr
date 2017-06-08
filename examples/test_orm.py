@@ -16,7 +16,7 @@ def gen_hash(s):
 
 
 class SecureUser(Model):
-    username = fields.StringField()
+    username = fields.StringField(size=5)
     _password = fields.StringField()
 
     @property

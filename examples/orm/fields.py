@@ -1,6 +1,7 @@
+import re
 import json
 
-from .base import Field
+from .base import Field, ValidationError
 
 
 class IntegerField(Field):
@@ -9,10 +10,6 @@ class IntegerField(Field):
 
 class FloatField(Field):
     _type = float
-
-
-class StringField(Field):
-    _type = str
 
 
 class BooleanField(Field):
@@ -25,19 +22,45 @@ class ListField(Field):
 
 class PositiveNumberField(Field):
 
-    def validate_type(self, val):
-        return val > 0
+    def validate(self, val):
+        if val <= 0:
+            raise ValidationError('{} is not > 0'.format(val))
+        super().validate(val)
 
 
 class PositiveIntegerField(IntegerField, PositiveNumberField):
     pass
 
 
+class StringField(Field):
+    _type = str
+
+    def __init__(self, size=None, **kwargs):
+        self.size = size
+
+    def validate(self, val):
+        super().validate(val)
+        if self.size is not None and len(val) > self.size:
+            raise ValidationError('{} exceeds max length'.format(val))
+
+
+class RegexStringField(StringField):
+
+    def __init__(self, pattern, **kwargs):
+        self.pattern = re.compile(pattern)
+        super().__init__(**kwargs)
+
+    def validate(self, val):
+        if not self.pattern.match(val):
+            raise ValidationError('{} does not match regex'.format(val))
+        super().validate(val)
+
+
 class JsonField(Field):
 
-    def validate_type(self, val):
+    def validate(self, val):
         try:
             json.dumps(val)
-            return True
         except TypeError:
-            return False
+            raise ValidationError('{} is not json serializable'.format(val))
+        super().validate(val)

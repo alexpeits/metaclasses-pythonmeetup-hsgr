@@ -18,26 +18,18 @@ class BaseDescriptor(object):
 
 class Field(BaseDescriptor):
     _type = None
-    _validators = []
 
-    def __init__(self, description='', validators=None):
+    def __init__(self, description=''):
         self.description = description
         self.name = None
-        if validators is not None:
-            self._validators = [*self._validators, *validators]
 
     def __set__(self, obj, val):
         self.validate(val)
         super().__set__(obj, val)
 
-    def validate_type(self, val):
-        return isinstance(val, self._type)
-
     def validate(self, val):
-        if not self.validate_type(val):
+        if self._type is not None and not isinstance(val, self._type):
             raise ValidationError('incorrect type for value {}'.format(val))
-        if not all(v(val) is True for v in self._validators):
-            raise ValidationError('invalid value')
 
 
 class ModelMeta(type):
