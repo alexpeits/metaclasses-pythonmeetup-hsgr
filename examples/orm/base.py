@@ -23,13 +23,23 @@ class Field(BaseDescriptor):
         self.description = description
         self.name = None
 
+    def __get__(self, obj, cls):
+        val = super().__get__(obj, cls)
+        return self.transform_get(val)
+
     def __set__(self, obj, val):
         self.validate(val)
-        super().__set__(obj, val)
+        super().__set__(obj, self.transform_set(val))
 
     def validate(self, val):
         if self._type is not None and not isinstance(val, self._type):
             raise ValidationError('incorrect type for value {}'.format(val))
+
+    def transform_get(self, val):
+        return val
+
+    def transform_set(self, val):
+        return val
 
 
 class ModelMeta(type):
@@ -54,3 +64,12 @@ class Model(metaclass=ModelMeta):
             if k not in fields:
                 raise ValueError('{} not declared'.format(k))
             setattr(self, k, v)  # <Field>.__set__
+
+    def __repr__(self):
+        name = self.__class__.__name__
+        fields = []
+        for f in self._fields:
+            if f in self.__dict__:
+                val = self.__dict__[f]
+                fields.append('{}={}'.format(f, val))
+        return '{}({})'.format(name, ', '.join(fields))

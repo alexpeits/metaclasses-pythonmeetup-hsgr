@@ -1,14 +1,13 @@
 #+TITLE: Python metaclasses & descriptors
-#+OPTIONS: toc:nil num:nil reveal_progress:t reveal_history:t reveal_title_slide:"<h1>%t</h1>"
+#+OPTIONS: toc:nil num:nil reveal_progress:t reveal_history:t reveal_title_slide:"<h1>%t</h1><br><h3>Athens&nbsp;Python&nbsp;users&nbsp;meetup</h3>"
 #+REVEAL_TRANS: none
-#+REVEAL_THeme: beige
+#+REVEAL_THEME: beige
 #+REVEAL_EXTRA_CSS: ./static/custom.css
 #+REVEAL_ROOT: ./static/reveal.js
 #+REVEAL_PLUGINS: (highlight classList markdown zoom notes)
 #+REVEAL_HIGHLIGHT_CSS: https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/solarized-light.min.css
 
 * Metaclasses
-  
 
 ** type
 
@@ -22,11 +21,23 @@
   type(MyClass)      # type
   type(object)       # type
   type(type)         # type
+#+END_SRC
 
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  >>> print(type.__doc__)
+  type(object_or_name, bases, dict)
+  type(object) -> the object's type
+  type(name, bases, dict) -> a new type
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
   #      class     parent     class
   #      name      classes    __dict__
-  type( 'Klass',     (),        {}     )  # __main__.Klass
-  # class Klass(object): pass
+  type( 'MyClass',     (),        {}     )  # returns __main__.MyClass
 #+END_SRC
 
 #+REVEAL: split
@@ -83,7 +94,7 @@
 ** Metaclass API
 
 #+BEGIN_SRC python
-  Metaclass.__prepare__(mcls, name, bases, attrs)  # classmethod
+  Metaclass.__prepare__(mcls, name, bases)  # classmethod
   Metaclass.__new__(mcls, name, bases, attrs, **kwargs)
   Metaclass.__init__(cls, name, bases, attrs, **kwargs)
   Metaclass.__call__(cls, *args, **kwargs)
@@ -112,10 +123,10 @@
           return super().__new__(mcls, name, bases, dict(attrs))
 
   class MyClass(metaclass=MyMeta):
-      a = 1
-      B = 2
+      lowercase = 1
+      UPPERCASE = 2
 
-  MyClass.__dict__  # {..., 'B': 2} (no a)
+  MyClass.__dict__  # {'UPPERCASE': 2}
 #+END_SRC
 
 
@@ -133,14 +144,14 @@
   
 ** =__call__=
 
-- *object* instantiation (before =Class.__new__= & =Class.__init__=)
+- *object* instantiation (before =Class.__new__= & =object.__init__=)
   
 #+BEGIN_SRC python
   class MyMeta(type):
       def __call__(cls, *args, **kwargs):
           print('In metaclass', args, kwargs)
           return super().__call__(*args, **kwargs)
-
+    
   class MyClass(metaclass=MyMeta):
       def __init__(cls, *args, **kwargs):
           print('In class', args, kwargs)
@@ -179,12 +190,11 @@
 
 #+BEGIN_SRC python
   >>> class MyClass(metaclass=MyMeta):
-  ...   def __new__(cls, *args, **kwargs):
-  ...       print('Class __new__')
-  ...       return super().__new__(cls)
-
-  ...   def __init__(self, *args, **kwargs):
-  ...       print('Class __init__')
+  ...     def __new__(cls, *args, **kwargs):
+  ...         print('Class __new__')
+  ...         return super().__new__(cls)
+  ...     def __init__(self, *args, **kwargs):
+  ...         print('Class __init__')
   ...
   Meta __prepare__
   Meta __new__
@@ -224,12 +234,40 @@
    
 #+BEGIN_SRC python
   >>> class MyClass(metaclass=print):
-  ...     pass
+  ...     a = 1
   ...
-  MyClass () {'__qualname__': 'MyClass', '__module__': '__main__'}
+  MyClass () {'__qualname__': 'MyClass', '__module__': '__main__', 'a': 1}
   >>> MyClass is None
   True
 #+END_SRC
+
+
+* Attribute lookup
+
+** Object-level (instance.attr)
+
+#+ATTR_REVEAL: :frag (appear)
+- attr in =Class.__dict__= and attr is data descriptor -> =Class.__dict__['attr'].__get__(instance, Class)=
+- attr in =instance.__dict__= -> =instance.__dict__['attr']=
+- attr in =Class.__dict__= *and* attr is *not* a data descriptor -> =Class.__dict__['attr'].__get__(instance, Class)=
+- attr in =Class.__dict__= -> =Class.__dict__['attr']=
+- =Class.__getattr__= exists -> =Class.__getattr__('attr')=
+   
+
+** Class-level (Class.attr)
+
+#+ATTR_REVEAL: :frag (appear)
+- attr in =Metaclass.__dict__= and attr is data desciptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
+- attr in =Class.__dict__= and attr is descriptor -> =Class.__dict__['attr'].__get__(None, Class)=
+- attr in =Class.__dict__= -> =Class.__dict__['attr']=
+
+
+** Class-level (cont.)
+
+#+ATTR_REVEAL: :frag (appear)
+- attr in =Metaclass.__dict__= *and* attr is *not* a data descriptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
+- attr in =Metaclass.__dict__= -> =Metaclass.__dict__['attr']=
+- =Metaclass.__getattr__= exists -> =Metaclass.__getattr__('attr')=
 
 
 * Descriptors
@@ -239,12 +277,11 @@
 - =__get__= & =__set__= = data descriptors
 - only =__get__= = non-data descriptors
 - e.g. =property= decorator (getter & setter)
-  
 
 ** Descriptor API
 
 #+BEGIN_SRC python
-  descr.__get__(self, obj, type=None)  # -> value
+  descr.__get__(self, obj, cls)  # -> value
   descr.__set__(self, obj, value)  # -> None
   descr.__delete__(self, obj)  # -> None
 #+END_SRC
@@ -418,33 +455,67 @@
 #+END_SRC
 
 
-* Attribute lookup
-  
-
-** Object-level (instance.attr)
-
-#+ATTR_REVEAL: :frag (appear)
-- attr in =Class.__dict__= and attr is data descriptor -> =Class.__dict__['attr'].__get__(instance, Class)=
-- attr in =instance.__dict__= -> =instance.__dict__['attr']=
-- attr in =Class.__dict__= *and* attr is *not* a descriptor -> =Class.__dict__['attr'].__get__(instance, Class)=
-- attr in =Class.__dict__= -> =Class.__dict__['attr']=
-- =Class.__getattr__= exists -> =Class.__getattr__('attr')=
+** Example: using annotations for typing (Python 3.6)
    
+#+BEGIN_SRC python
+  >>> class MyClass:
+  ...     a: int
+  ...     b: str
+  ...
+  >>> MyClass.__annotations__
+  {'a': int, 'b': str}
+#+END_SRC
 
-** Class-level (Class.attr)
+#+REVEAL: split
 
-#+ATTR_REVEAL: :frag (appear)
-- attr in =Metaclass.__dict__= and attr is data desciptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
-- attr in =Class.__dict__= and attr is descriptor -> =Class.__dict__['attr'].__get__(None, Class)=
-- attr in =Class.__dict__= -> =Class.__dict__['attr']=
+#+BEGIN_SRC python
+  >>> class MyClass(Typed):
+  ...     a: int
+  ...     b: str
+  ...
+  >>> obj = MyClass()
+  >>> obj.a = 1
+  >>> obj.a = 'foo'
+  ...
+  ...
+  TypeError: 'foo' is not of type 'int'
+#+END_SRC
 
+#+REVEAL: split
 
-** Class-level (cont.)
+#+BEGIN_SRC python
+  class TypedDescriptor:
+      def __init__(self, name, tp):
+          self.name = name
+          self.tp = tp
 
-#+ATTR_REVEAL: :frag (appear)
-- attr in =Metaclass.__dict__= *and* attr is *not* a descriptor -> =Metaclass.__dict__['attr'].__get__(Class, Metaclass)=
-- attr in =Metaclass.__dict__= -> =Metaclass.__dict__['attr']=
-- =Metaclass.__getattr__= exists -> =Metaclass.__getattr__('attr')=
+      def __get__(self, obj, cls):
+          if obj is None:
+              return self
+          try:
+              return obj.__dict__[self.name]
+          except KeyError:
+              raise AttributeError()
+
+      def __set__(self, obj, val):
+          if not isinstance(val, self.tp):
+              raise TypeError()
+          obj.__dict__[self.name] = val
+#+END_SRC
+
+#+REVEAL: split
+
+#+BEGIN_SRC python
+  class TypedMeta(type):
+      def __new__(mcls, name, bases, attrs):
+          ann = attrs.get('__annotations__', {})
+          for k, v in ann.items():
+              attrs[k] = TypedDescriptor(name=k, tp=v)
+          return super().__new__(mcls, name, bases, attrs)
+
+  class Typed(metaclass=TypedMeta):
+      pass
+#+END_SRC
 
   
 * Links
@@ -453,6 +524,7 @@
 - [[https://docs.python.org/3/howto/descriptor.html][Descriptor HowTo Guide]]
 - [[https://www.youtube.com/watch?v=sPiWg5jSoZI][Dave Beazley: Python 3 Metaprogramming]]
 - [[https://www.python.org/dev/peps/pep-3115/][PEP 3115: Metaclasses in Python 3]]
+- [[https://github.com/python/cpython/blob/3.6/Lib/typing.py#L2119][Python 3.6 NamedTuple class (source code)]]
 - [[https://github.com/alexpeits/metaclasses-pythonmeetup-hsgr][Presentation git repo]]
 
 # Local Variables:

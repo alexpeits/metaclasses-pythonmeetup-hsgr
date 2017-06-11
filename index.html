@@ -27,16 +27,16 @@
 <body>
 <div class="reveal">
 <div class="slides">
-<section id="sec-title-slide"><h1>Python metaclasses &amp; descriptors</h1>
+<section id="sec-title-slide"><h1>Python metaclasses &amp; descriptors</h1><br><h3>Athens&nbsp;Python&nbsp;users&nbsp;meetup</h3>
 </section>
 
 <section>
-<section id="slide-orgd8c3b10">
-<h2 id="orgd8c3b10">Metaclasses</h2>
-<div class="outline-text-2" id="text-orgd8c3b10">
+<section id="slide-orge98e31a">
+<h2 id="orge98e31a">Metaclasses</h2>
+<div class="outline-text-2" id="text-orge98e31a">
 </div></section>
-<section id="slide-org2583264">
-<h3 id="org2583264">type</h3>
+<section id="slide-org902ad90">
+<h3 id="org902ad90">type</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class MyClass(object):
@@ -48,11 +48,29 @@ type(MyClass())    # __main__.MyClass
 type(MyClass)      # type
 type(object)       # type
 type(type)         # type
+</code></pre>
+</div>
 
-#      class     parent     class
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="python" >>>> print(type.__doc__)
+type(object_or_name, bases, dict)
+type(object) -> the object's type
+type(name, bases, dict) -> a new type
+</code></pre>
+</div>
+
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="python" >#      class     parent     class
 #      name      classes    __dict__
-type( 'Klass',     (),        {}     )  # __main__.Klass
-# class Klass(object): pass
+type( 'MyClass',     (),        {}     )  # returns __main__.MyClass
 </code></pre>
 </div>
 
@@ -128,11 +146,11 @@ type( 'Klass',     (),        {}     )  # __main__.Klass
 
 
 </section>
-<section id="slide-org45164d0">
-<h3 id="org45164d0">Metaclass API</h3>
+<section id="slide-orgc868b86">
+<h3 id="orgc868b86">Metaclass API</h3>
 <div class="org-src-container">
 
-<pre><code class="python" >Metaclass.__prepare__(mcls, name, bases, attrs)  # classmethod
+<pre><code class="python" >Metaclass.__prepare__(mcls, name, bases)  # classmethod
 Metaclass.__new__(mcls, name, bases, attrs, **kwargs)
 Metaclass.__init__(cls, name, bases, attrs, **kwargs)
 Metaclass.__call__(cls, *args, **kwargs)
@@ -141,8 +159,8 @@ Metaclass.__call__(cls, *args, **kwargs)
 
 
 </section>
-<section id="slide-org26e419b">
-<h3 id="org26e419b"><code>__prepare__</code></h3>
+<section id="slide-org3e1626c">
+<h3 id="org3e1626c"><code>__prepare__</code></h3>
 <ul>
 <li>returns dict-like object (empty or not)</li>
 <li>if not dict, must be converted to dict before <code>__new__</code> returns</li>
@@ -150,8 +168,8 @@ Metaclass.__call__(cls, *args, **kwargs)
 </ul>
 
 </section>
-<section id="slide-orga7b6109">
-<h4 id="orga7b6109">Example: Allow only uppercase attribute names</h4>
+<section id="slide-org6c7bc61">
+<h4 id="org6c7bc61">Example: Allow only uppercase attribute names</h4>
 <div class="org-src-container">
 
 <pre><code class="python" >class OnlyUppercase(dict):
@@ -168,17 +186,17 @@ class MyMeta(type):
         return super().__new__(mcls, name, bases, dict(attrs))
 
 class MyClass(metaclass=MyMeta):
-    a = 1
-    B = 2
+    lowercase = 1
+    UPPERCASE = 2
 
-MyClass.__dict__  # {..., 'B': 2} (no a)
+MyClass.__dict__  # {'UPPERCASE': 2}
 </code></pre>
 </div>
 
 
 </section>
-<section id="slide-org030c060">
-<h3 id="org030c060"><code>__new__</code></h3>
+<section id="slide-org11887b3">
+<h3 id="org11887b3"><code>__new__</code></h3>
 <ul>
 <li><b>class</b> constructor (<code>class MyClass ...</code> -&gt; <code>__new__</code> runs)</li>
 <li>most useful</li>
@@ -187,8 +205,8 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-org13bfae8">
-<h3 id="org13bfae8"><code>__init__</code></h3>
+<section id="slide-orgfb3f017">
+<h3 id="orgfb3f017"><code>__init__</code></h3>
 <ul>
 <li><b>class</b> initializer (after <code>__new__</code>)</li>
 <li>not generally useful</li>
@@ -197,10 +215,10 @@ MyClass.__dict__  # {..., 'B': 2} (no a)
 
 
 </section>
-<section id="slide-orga91f832">
-<h3 id="orga91f832"><code>__call__</code></h3>
+<section id="slide-orga30c20e">
+<h3 id="orga30c20e"><code>__call__</code></h3>
 <ul>
-<li><b>object</b> instantiation (before <code>Class.__new__</code> &amp; <code>Class.__init__</code>)</li>
+<li><b>object</b> instantiation (before <code>Class.__new__</code> &amp; <code>object.__init__</code>)</li>
 
 </ul>
 
@@ -227,8 +245,8 @@ In class (1, 2) {'foo': 42}
 
 
 </section>
-<section id="slide-orga1a1210">
-<h3 id="orga1a1210">Example: Call order</h3>
+<section id="slide-org7019814">
+<h3 id="org7019814">Example: Call order</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class MyMeta(type):
@@ -257,12 +275,11 @@ In class (1, 2) {'foo': 42}
 <div class="org-src-container">
 
 <pre><code class="python" >>>> class MyClass(metaclass=MyMeta):
-...   def __new__(cls, *args, **kwargs):
-...       print('Class __new__')
-...       return super().__new__(cls)
-
-...   def __init__(self, *args, **kwargs):
-...       print('Class __init__')
+...     def __new__(cls, *args, **kwargs):
+...         print('Class __new__')
+...         return super().__new__(cls)
+...     def __init__(self, *args, **kwargs):
+...         print('Class __init__')
 ...
 Meta __prepare__
 Meta __new__
@@ -277,8 +294,8 @@ Class __init__
 
 
 </section>
-<section id="slide-orgf666468">
-<h3 id="orgf666468">Example: singleton</h3>
+<section id="slide-orgd81a91d">
+<h3 id="orgd81a91d">Example: singleton</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class SingletonMeta(type):
@@ -305,14 +322,14 @@ True
 
 
 </section>
-<section id="slide-org98575b3">
-<h3 id="org98575b3">Example: metaclass is a callable</h3>
+<section id="slide-orgf5ef573">
+<h3 id="orgf5ef573">Example: metaclass is a callable</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >>>> class MyClass(metaclass=print):
-...     pass
+...     a = 1
 ...
-MyClass () {'__qualname__': 'MyClass', '__module__': '__main__'}
+MyClass () {'__qualname__': 'MyClass', '__module__': '__main__', 'a': 1}
 >>> MyClass is None
 True
 </code></pre>
@@ -322,8 +339,49 @@ True
 </section>
 </section>
 <section>
-<section id="slide-org4ad71a3">
-<h2 id="org4ad71a3">Descriptors</h2>
+<section id="slide-orgcfdb8cc">
+<h2 id="orgcfdb8cc">Attribute lookup</h2>
+<div class="outline-text-2" id="text-orgcfdb8cc">
+</div></section>
+<section id="slide-orgbd4b843">
+<h3 id="orgbd4b843">Object-level (instance.attr)</h3>
+<ul>
+<li class="fragment appear">attr in <code>Class.__dict__</code> and attr is data descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
+<li class="fragment appear">attr in <code>instance.__dict__</code> -&gt; <code>instance.__dict__['attr']</code></li>
+<li class="fragment appear">attr in <code>Class.__dict__</code> <b>and</b> attr is <b>not</b> a data descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
+<li class="fragment appear">attr in <code>Class.__dict__</code> -&gt; <code>Class.__dict__['attr']</code></li>
+<li class="fragment appear"><code>Class.__getattr__</code> exists -&gt; <code>Class.__getattr__('attr')</code></li>
+
+</ul>
+
+
+</section>
+<section id="slide-org2150bfc">
+<h3 id="org2150bfc">Class-level (Class.attr)</h3>
+<ul>
+<li class="fragment appear">attr in <code>Metaclass.__dict__</code> and attr is data desciptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
+<li class="fragment appear">attr in <code>Class.__dict__</code> and attr is descriptor -&gt; <code>Class.__dict__['attr'].__get__(None, Class)</code></li>
+<li class="fragment appear">attr in <code>Class.__dict__</code> -&gt; <code>Class.__dict__['attr']</code></li>
+
+</ul>
+
+
+</section>
+<section id="slide-org7c2d425">
+<h3 id="org7c2d425">Class-level (cont.)</h3>
+<ul>
+<li class="fragment appear">attr in <code>Metaclass.__dict__</code> <b>and</b> attr is <b>not</b> a data descriptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
+<li class="fragment appear">attr in <code>Metaclass.__dict__</code> -&gt; <code>Metaclass.__dict__['attr']</code></li>
+<li class="fragment appear"><code>Metaclass.__getattr__</code> exists -&gt; <code>Metaclass.__getattr__('attr')</code></li>
+
+</ul>
+
+
+</section>
+</section>
+<section>
+<section id="slide-org63f505a">
+<h2 id="org63f505a">Descriptors</h2>
 <ul>
 <li>only defined in class-level (not in <code>__init__</code> etc.)</li>
 <li>objects with <code>__get__</code>, <code>__set__</code> &amp; <code>__delete__</code> methods</li>
@@ -333,13 +391,12 @@ True
 
 </ul>
 
-
 </section>
-<section id="slide-org51f44de">
-<h3 id="org51f44de">Descriptor API</h3>
+<section id="slide-org32a5b2e">
+<h3 id="org32a5b2e">Descriptor API</h3>
 <div class="org-src-container">
 
-<pre><code class="python" >descr.__get__(self, obj, type=None)  # -> value
+<pre><code class="python" >descr.__get__(self, obj, cls)  # -> value
 descr.__set__(self, obj, value)  # -> None
 descr.__delete__(self, obj)  # -> None
 </code></pre>
@@ -347,8 +404,8 @@ descr.__delete__(self, obj)  # -> None
 
 
 </section>
-<section id="slide-org8b6cc9f">
-<h3 id="org8b6cc9f">Example</h3>
+<section id="slide-org2c8ed95">
+<h3 id="org2c8ed95">Example</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class Descriptor(object):
@@ -409,8 +466,8 @@ get attr
 
 
 </section>
-<section id="slide-org1952f29">
-<h3 id="org1952f29">Example</h3>
+<section id="slide-orgcc75ae5">
+<h3 id="orgcc75ae5">Example</h3>
 <ul>
 <li>use descriptors to indirectly set values on <code>instance.__dict__</code></li>
 <li>if called from class, just return the descriptor class</li>
@@ -480,16 +537,16 @@ get attr
 </section>
 </section>
 <section>
-<section id="slide-org8706ca5">
-<h2 id="org8706ca5">Metaclasses &amp; descriptors</h2>
+<section id="slide-orge3fbccd">
+<h2 id="orge3fbccd">Metaclasses &amp; descriptors</h2>
 <ul>
 <li><code>attr = Descriptor('attr')</code> -&gt; <code>attr = Descriptor()</code></li>
 
 </ul>
 
 </section>
-<section id="slide-orgd597184">
-<h3 id="orgd597184">Example</h3>
+<section id="slide-orgc32a210">
+<h3 id="orgc32a210">Example</h3>
 <div class="org-src-container">
 
 <pre><code class="python" >class Descriptor(object):
@@ -549,56 +606,91 @@ get attr
 
 
 </section>
+<section id="slide-org20f5312">
+<h3 id="org20f5312">Example: using annotations for typing (Python 3.6)</h3>
+<div class="org-src-container">
+
+<pre><code class="python" >>>> class MyClass:
+...     a: int
+...     b: str
+...
+>>> MyClass.__annotations__
+{'a': int, 'b': str}
+</code></pre>
+</div>
+
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="python" >>>> class MyClass(Typed):
+...     a: int
+...     b: str
+...
+>>> obj = MyClass()
+>>> obj.a = 1
+>>> obj.a = 'foo'
+...
+...
+TypeError: 'foo' is not of type 'int'
+</code></pre>
+</div>
+
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="python" >class TypedDescriptor:
+    def __init__(self, name, tp):
+        self.name = name
+        self.tp = tp
+
+    def __get__(self, obj, cls):
+        if obj is None:
+            return self
+        try:
+            return obj.__dict__[self.name]
+        except KeyError:
+            raise AttributeError()
+
+    def __set__(self, obj, val):
+        if not isinstance(val, self.tp):
+            raise TypeError()
+        obj.__dict__[self.name] = val
+</code></pre>
+</div>
+
+</section>
+<section >
+
+<div class="org-src-container">
+
+<pre><code class="python" >class TypedMeta(type):
+    def __new__(mcls, name, bases, attrs):
+        ann = attrs.get('__annotations__', {})
+        for k, v in ann.items():
+            attrs[k] = TypedDescriptor(name=k, tp=v)
+        return super().__new__(mcls, name, bases, attrs)
+
+class Typed(metaclass=TypedMeta):
+    pass
+</code></pre>
+</div>
+
+
+</section>
 </section>
 <section>
-<section id="slide-org8fc1eee">
-<h2 id="org8fc1eee">Attribute lookup</h2>
-<div class="outline-text-2" id="text-org8fc1eee">
-</div></section>
-<section id="slide-org18c1d02">
-<h3 id="org18c1d02">Object-level (instance.attr)</h3>
-<ul>
-<li class="fragment appear">attr in <code>Class.__dict__</code> and attr is data descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
-<li class="fragment appear">attr in <code>instance.__dict__</code> -&gt; <code>instance.__dict__['attr']</code></li>
-<li class="fragment appear">attr in <code>Class.__dict__</code> <b>and</b> attr is <b>not</b> a descriptor -&gt; <code>Class.__dict__['attr'].__get__(instance, Class)</code></li>
-<li class="fragment appear">attr in <code>Class.__dict__</code> -&gt; <code>Class.__dict__['attr']</code></li>
-<li class="fragment appear"><code>Class.__getattr__</code> exists -&gt; <code>Class.__getattr__('attr')</code></li>
-
-</ul>
-
-
-</section>
-<section id="slide-orge3c9221">
-<h3 id="orge3c9221">Class-level (Class.attr)</h3>
-<ul>
-<li class="fragment appear">attr in <code>Metaclass.__dict__</code> and attr is data desciptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
-<li class="fragment appear">attr in <code>Class.__dict__</code> and attr is descriptor -&gt; <code>Class.__dict__['attr'].__get__(None, Class)</code></li>
-<li class="fragment appear">attr in <code>Class.__dict__</code> -&gt; <code>Class.__dict__['attr']</code></li>
-
-</ul>
-
-
-</section>
-<section id="slide-org5c9bb8b">
-<h3 id="org5c9bb8b">Class-level (cont.)</h3>
-<ul>
-<li class="fragment appear">attr in <code>Metaclass.__dict__</code> <b>and</b> attr is <b>not</b> a descriptor -&gt; <code>Metaclass.__dict__['attr'].__get__(Class, Metaclass)</code></li>
-<li class="fragment appear">attr in <code>Metaclass.__dict__</code> -&gt; <code>Metaclass.__dict__['attr']</code></li>
-<li class="fragment appear"><code>Metaclass.__getattr__</code> exists -&gt; <code>Metaclass.__getattr__('attr')</code></li>
-
-</ul>
-
-
-</section>
-</section>
-<section>
-<section id="slide-org0d808b5">
-<h2 id="org0d808b5">Links</h2>
+<section id="slide-org14a4694">
+<h2 id="org14a4694">Links</h2>
 <ul>
 <li><a href="https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/">Understanding Python metaclasses</a></li>
 <li><a href="https://docs.python.org/3/howto/descriptor.html">Descriptor HowTo Guide</a></li>
 <li><a href="https://www.youtube.com/watch?v=sPiWg5jSoZI">Dave Beazley: Python 3 Metaprogramming</a></li>
 <li><a href="https://www.python.org/dev/peps/pep-3115/">PEP 3115: Metaclasses in Python 3</a></li>
+<li><a href="https://github.com/python/cpython/blob/3.6/Lib/typing.py#L2119">Python 3.6 NamedTuple class (source code)</a></li>
 <li><a href="https://github.com/alexpeits/metaclasses-pythonmeetup-hsgr">Presentation git repo</a></li>
 
 </ul>

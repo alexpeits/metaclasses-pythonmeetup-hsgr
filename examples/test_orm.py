@@ -29,3 +29,9 @@ class SecureUser(Model):
 
     def check_password(self, pw):
         return self._password == gen_hash(pw)
+
+
+class TestTable(Model):
+    regex = fields.RegexStringField(pattern=r'[A-Z][a-z0-9]*')
+    json = fields.JsonField()
+    pos_int = fields.PositiveIntegerField()

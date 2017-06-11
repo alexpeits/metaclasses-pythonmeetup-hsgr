@@ -64,3 +64,9 @@ class JsonField(Field):
         except TypeError:
             raise ValidationError('{} is not json serializable'.format(val))
         super().validate(val)
+
+    def transform_get(self, val):
+        return json.loads(val)
+
+    def transform_set(self, val):
+        return json.dumps(val)
