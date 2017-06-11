@@ -22,4 +22,4 @@ https://alexpeits.github.io/metaclasses-pythonmeetup-hsgr
 
 ### org-mode
 
-- github.com/alexpeits/metaclasses-pythonmeetup-hsgr/blob/master/index.org
+- https://github.com/alexpeits/metaclasses-pythonmeetup-hsgr/blob/master/index.org
